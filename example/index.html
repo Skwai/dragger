@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<title>Example</title>
+<style>
+.Parent {
+  list-style: none;
+  display: flex;
+  padding: 0;
+  margin: 0;
+}
+
+.Parent__Child {
+  flex: 1 auto;
+  background: #eee;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font: 1rem sans-serif;
+  border-radius: 6px;
+  height: 5rem;
+  margin: 0 0.5rem
+}
+
+</style>
+</head>
+<body>
+
+  <ul class="Parent">
+    <li class="Parent__Child">1</li>
+    <li class="Parent__Child">2</li>
+    <li class="Parent__Child">3</li>
+    <li class="Parent__Child">4</li>
+    <li class="Parent__Child">5</li>
+  </ul>
+
+  <script src="../dist/index.min.js"></script>
+  <script>
+  new Dragger({
+    element: document.querySelector(".Parent")
+  });
+  </script>
+</body>
+</html>

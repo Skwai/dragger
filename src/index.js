@@ -15,8 +15,7 @@ export default class Dragger {
       element,
       opts: Object.assign({}, DEFAULTS, opts),
       handleElement: null,
-      placeholderElement: null,
-      placeholderPosition: { top: 0, left: 0 }      
+      placeholderElement: null
     });
 
     this.handleMouseUp = this.handleMouseUp.bind(this);
@@ -31,36 +30,47 @@ export default class Dragger {
   }
 
   handleMouseDown({ target }) {
-    this.placeholderElement = target; 
-    this.placeholderElement.classList.add("placeholder");
-
-    const placeholder = target;
-    const handle = placeholder.cloneNode(true);
-    placeholder.parentNode.appendChild(handle);
-    const { left, top, width, height } = target.getBoundingClientRect();
-
-    placeholder.classList.add(this.opts.placeholderClassName);
-    Object.assign(handle, {
-      position: "absolute",
-      width: `${width}px`,
-      height: `${height}px`
-    });
-
-    Object.assign(this.placeholderPosition, { left, top });
-    this.placeholderElement = placeholder;
-    this.handleElement = handle;
+    this.init(target);
   }
 
   positionHandle({ clientX, clientY }) {
+    const { placeholderElement, handleElement, element } = this;
+    const c = element.getBoundingClientRect();
+    const p = placeholderElement.getBoundingClientRect();
+    const x = (() => {
+      const pos = clientX - p.width / 2; // clientX - c.left + p.left;
+      if (pos < c.left) return c.left;
+      if (pos > c.right - p.width) return c.right - p.width;
+      return pos;
+    })();
+    const y = (() => {
+      const pos = clientY - p.height;
+      if (pos < c.top) return c.top;
+      if (pos > c.bottom) return c.bottom - p.height
+      return pos;
+    })();
     window.requestAnimationFrame(() => {
-      const el = this.handleElement;
-      const { left, top } = this.placeholderPosition;
-      const x = clientX - left;
-      const y = clientY - top;
-      Object.assign(el.style, {
+      Object.assign(handleElement.style, {
+        position: "absolute",
+        width: `${p.width}px`,
+        height: `${p.height}px`,
         left: `${x}px`,
         top: `${y}px`
       });
+    });
+  }
+
+  init(element) {
+    const placeholder = this.placeholderElement = element;
+    const handle = this.handleElement = placeholder.cloneNode(true);
+
+    const { left, top, width, height } = placeholder.getBoundingClientRect();
+    placeholder.parentNode.appendChild(handle);
+    placeholder.classList.add(this.opts.placeholderClassName);
+    Object.assign(handle.style, {
+      position: "absolute",
+      width: `${width}px`,
+      height: `${height}px`
     });
   }
 
